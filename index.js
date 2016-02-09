@@ -17,4 +17,24 @@ module.exports = function(robot) {
       done();
     });
   });
+
+  robot.respond(/convox services create (mysql|postgres|redis)\s*(.*?)$/, function(msg, done) {
+    type = msg.match[1];
+    name = msg.match[2];
+
+    robot.http(process.env.CONVOX_GRID_URL + "/apps").
+          header('Version', '20150911185301').
+          auth('convox', process.env.CONVOX_GRID_PASSWORD).
+          post({
+                type: type,
+              })(function(err, resp, body) {
+      if(resp.statusCode == 500) {
+        error = JSON.parse(body)['error'];
+        msg.reply(error);
+      }
+
+      done();
+    });
+
+  });
 }
