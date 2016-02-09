@@ -1,0 +1,7 @@
+{
+  "name": "Convox",
+  "permalink": "convox",
+  "description": "Manage your Convox Cluster from Nestor",
+  "environment_keys": {
+  }
+}

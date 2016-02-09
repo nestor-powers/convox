@@ -1,0 +1,27 @@
+{
+  "name": "nestor-convox",
+  "version": "0.1.1",
+  "description": "manage your Convox Cluster from Nestor",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/asknestor-apps/convox"
+  },
+  "keywords": [
+    "hubot",
+    "hubot-scripts",
+    "trello"
+  ],
+  "author": "Arun Thampi <arun.thampi@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/asknestor-apps/convox/issues"
+  },
+  "homepage": "https://github.com/asknestor-apps/convox",
+  "dependencies": {
+    "nestorbot": "0.5.0"
+  }
+}
