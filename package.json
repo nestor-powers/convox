@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/asknestor-apps/convox",
   "dependencies": {
-    "nestorbot": "0.6.0"
+    "nestorbot": "0.14.0",
+    "qs": "6.1.0"
   }
 }
