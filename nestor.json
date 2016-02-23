@@ -3,7 +3,7 @@
   "permalink": "convox",
   "description": "Manage your Convox Cluster from Nestor",
   "environment_keys": {
-    "CONVOX_GRID_URL": true,
-    "CONVOX_GRID_PASSWORD": true
+    "NESTOR_CONVOX_GRID_URL": true,
+    "NESTOR_CONVOX_GRID_PASSWORD": true
   }
 }

@@ -2,10 +2,10 @@ var qs = require('qs');
 
 module.exports = function(robot) {
   var convox = function(path) {
-    return robot.http(process.env.CONVOX_GRID_URL + path).
+    return robot.http(process.env.NESTOR_CONVOX_GRID_URL + path).
                  header('Version', 'dev').
                  header('Content-Type', 'application/json').
-                 auth('convox', process.env.CONVOX_GRID_PASSWORD)
+                 auth('convox', process.env.NESTOR_CONVOX_GRID_PASSWORD)
   };
 
   robot.respond(/convox apps$/, function(msg, done) {
