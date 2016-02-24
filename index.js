@@ -1,4 +1,5 @@
 var qs = require('qs');
+var moment = require('moment');
 
 module.exports = function(robot) {
   var convox = function(path) {
@@ -15,8 +16,23 @@ module.exports = function(robot) {
           var appsList = [];
           apps = JSON.parse(body)
           for(var i in apps) {
-            appsList.push("* " + apps[i].name + ": " + apps[i].status);
+            appsList.push(msg.newRichResponse({
+              title: apps[i].name,
+              fields: [
+                {
+                  'title': 'Status',
+                  'value': apps[i].status,
+                  'short': true
+                },
+                {
+                  'title': 'Release',
+                  'value': apps[i].release,
+                  'short': true
+                }
+              ]
+            }));
           }
+
           msg.send(appsList, done);
         } else {
           msg.reply("Oops, looks like there was an error:" + body, done);
@@ -31,14 +47,23 @@ module.exports = function(robot) {
         error = JSON.parse(body)['error'];
         msg.reply("Oops, looks like there was an error: " + error, done);
       } else {
-        var result = [];
-
         info = JSON.parse(body);
-        result.push("Name: " + info.name);
-        result.push("Release: " + info.release);
-        result.push("Status: " + info.status);
 
-        msg.send(result, done);
+        msg.send(msg.newRichResponse({
+          title: info.name,
+          fields: [
+            {
+              'title': 'Status',
+              'value': info.status,
+              'short': true
+            },
+            {
+              'title': 'Release',
+              'value': info.release,
+              'short': true
+            }
+          ]
+        }), done);
       }
     });
   });
@@ -53,7 +78,41 @@ module.exports = function(robot) {
           var builds = JSON.parse(body)
           for(var i in builds ) {
             var b = builds[i];
-            buildsList.push("* ID:" + b.id + " Logs: " + b.logs + " Manifest: " + b.manifest + " Release: " + b.release + " Status: " + b.status + " Started At: " + b.started + " Ended At: " + b.ended);
+            buildsList.push(msg.newRichResponse({
+              title: "Build " + b.id,
+              fields: [
+                {
+                  'title': 'Logs',
+                  'value': b.logs,
+                  'short': true
+                },
+                {
+                  'title': 'Manifest',
+                  'value': b.manifest,
+                  'short': true
+                },
+                {
+                  'title': 'Release',
+                  'value': b.release,
+                  'short': true
+                },
+                {
+                  'title': 'Status',
+                  'value': b.status,
+                  'short': true
+                },
+                {
+                  'title': 'Started',
+                  'value': moment(b.started).fromNow(),
+                  'short': true
+                },
+                {
+                  'title': 'Ended',
+                  'value': moment(b.ended).fromNow(),
+                  'short': true
+                }
+              ]
+            }));
           }
           msg.send(buildsList, done);
         } else {
@@ -71,7 +130,41 @@ module.exports = function(robot) {
       convox("/apps" + appName + "/builds" + buildId).get()(function(err, resp, body) {
         if(resp.statusCode == 200) {
           var b = JSON.parse(body);
-          msg.send("* ID:" + b.id + " Logs: " + b.logs + " Manifest: " + b.manifest + " Release: " + b.release + " Status: " + b.status + " Started At: " + b.started + " Ended At: " + b.ended, done);
+          msg.send(msg.newRichResponse({
+            title: "Build " + b.id,
+            fields: [
+              {
+                'title': 'Logs',
+                'value': b.logs,
+                'short': true
+              },
+              {
+                'title': 'Manifest',
+                'value': b.manifest,
+                'short': true
+              },
+              {
+                'title': 'Release',
+                'value': b.release,
+                'short': true
+              },
+              {
+                'title': 'Status',
+                'value': b.status,
+                'short': true
+              },
+              {
+                'title': 'Started',
+                'value': moment(b.started).fromNow(),
+                'short': true
+              },
+              {
+                'title': 'Ended',
+                'value': moment(b.ended).fromNow(),
+                'short': true
+              }
+            ]
+          }), done);
         } else {
           msg.reply("Oops, looks like there was an error fetching builds for your app: " + appName, done);
         }
@@ -87,7 +180,41 @@ module.exports = function(robot) {
       convox("/apps" + appName + "/builds?" + qs.stringify({repo: repo})).post()(function(err, resp, body) {
         if(resp.statusCode == 200) {
           var b = JSON.parse(body);
-          msg.send("* Created build ID:" + b.id + " Logs: " + b.logs + " Manifest: " + b.manifest + " Release: " + b.release + " Status: " + b.status + " Started At: " + b.started + " Ended At: " + b.ended, done);
+          msg.send(msg.newRichResponse({
+            title: "Created Build " + b.id,
+            fields: [
+              {
+                'title': 'Logs',
+                'value': b.logs,
+                'short': true
+              },
+              {
+                'title': 'Manifest',
+                'value': b.manifest,
+                'short': true
+              },
+              {
+                'title': 'Release',
+                'value': b.release,
+                'short': true
+              },
+              {
+                'title': 'Status',
+                'value': b.status,
+                'short': true
+              },
+              {
+                'title': 'Started',
+                'value': moment(b.started).fromNow(),
+                'short': true
+              },
+              {
+                'title': 'Ended',
+                'value': moment(b.ended).fromNow(),
+                'short': true
+              }
+            ]
+          }), done);
         } else {
           msg.reply("Oops, looks like there was an error creating build for your app: " + appName, done);
         }
@@ -153,7 +280,26 @@ module.exports = function(robot) {
         var formations = JSON.parse(body);
         for(var i in formations) {
           var f = formations[i];
-          formationList.push("* Balancer: " + f.balancer + " Name: " + f.name + " Count: " + f.count + " Ports: " + f.ports.join(','));
+          formationList.push(msg.newRichResponse({
+            title: f.name,
+            fields: [
+              {
+                'title': 'Balancer',
+                'value': f.balancer,
+                'short': true
+              },
+              {
+                'title': 'Count',
+                'value': f.count,
+                'short': true
+              },
+              {
+                'title': 'Ports',
+                'value': f.ports.join(','),
+                'short': true
+              }
+            ]
+          }));
         }
 
         msg.send(formationList, done);
@@ -195,9 +341,21 @@ module.exports = function(robot) {
         var processes = JSON.parse(body);
         for(var i in processes) {
           var proc = processes[i];
-          processesList.push("* ID: " + proc.id + " Name: " + proc.name + " Command: " + proc.command + " Host: " + proc.host +
-                             " Memory: " + proc.memory + " CPU: " + proc.cpu + " Image: " + proc.image + " Ports: " + proc.ports.join(', ') +
-                             "Release: " + proc.release);
+          processesList.push(msg.newRichResponse({
+            title: proc.name,
+            fields: [
+              {
+                'title': 'ID',
+                'value': proc.id,
+                'short': true
+              },
+              {
+                'title': 'Command',
+                'value': "`" + proc.command + "`",
+                'short': true
+              }
+            ]
+          }));
         }
 
         msg.send(processesList, done);
@@ -233,9 +391,51 @@ module.exports = function(robot) {
       } else {
         var proc = JSON.parse(body);
 
-        msg.reply("* ID: " + proc.id + " Name: " + proc.name + " Command: " + proc.command + " Host: " + proc.host +
-                  " Memory: " + proc.memory + " CPU: " + proc.cpu + " Image: " + proc.image + " Ports: " + proc.ports.join(', ') +
-                  "Release: " + proc.release, done);
+        msg.reply(msg.newRichResponse({
+          title: proc.name,
+          fields: [
+            {
+              'title': 'ID',
+              'value': proc.id,
+              'short': true
+            },
+            {
+              'title': 'Command',
+              'value': "`" + proc.command + "`",
+              'short': true
+            },
+            {
+              'title': 'Host',
+              'value': proc.host,
+              'short': true
+            },
+            {
+              'title': 'Memory',
+              'value': proc.memory,
+              'short': true
+            },
+            {
+              'title': 'CPU',
+              'value': proc.cpu,
+              'short': true
+            },
+            {
+              'title': 'Image',
+              'value': proc.image,
+              'short': true
+            },
+            {
+              'title': 'Ports',
+              'value': proc.ports.join(','),
+              'short': true
+            },
+            {
+              'title': 'Release',
+              'value': proc.release,
+              'short': true
+            }
+          ]
+        }), done);
       }
     });
   });
@@ -269,7 +469,31 @@ module.exports = function(robot) {
         var releases = JSON.parse(body);
         for(var i in releases) {
           var rel = releases[i];
-          releasesList.push("* ID: " + rel.id + " Build: " + rel.build + " Env: " + rel.env + " Manifest: " + rel.manifest + " Created: " + rel.created);
+          releasesList.push(msg.newRichResponse({
+            title: "Release " + rel.id,
+            fields: [
+              {
+                'title': 'Build',
+                'value': rel.build,
+                'short': true
+              },
+              {
+                'title': 'Environment',
+                'value': rel.env,
+                'short': true
+              },
+              {
+                'title': 'Manifest',
+                'value': ref.manifest,
+                'short': true
+              },
+              {
+                'title': 'Created',
+                'value': moment(rel.created).fromNow(),
+                'short': true
+              }
+            ]
+          }));
         }
 
         msg.send(releasesList, done);
@@ -286,7 +510,31 @@ module.exports = function(robot) {
         msg.reply("Oops, looks like there was an error fetching releases for your app: " + name, done);
       } else {
         var rel= JSON.parse(body);
-        msg.reply("* ID: " + rel.id + " Build: " + rel.build + " Env: " + rel.env + " Manifest: " + rel.manifest + " Created: " + rel.created, done);
+        msg.reply(msg.newRichResponse({
+          title: "Release " + rel.id,
+          fields: [
+            {
+              'title': 'Build',
+              'value': rel.build,
+              'short': true
+            },
+            {
+              'title': 'Environment',
+              'value': rel.env,
+              'short': true
+            },
+            {
+              'title': 'Manifest',
+              'value': ref.manifest,
+              'short': true
+            },
+            {
+              'title': 'Created',
+              'value': moment(rel.created).fromNow(),
+              'short': true
+            }
+          ]
+        }), done);
       }
     });
   });
@@ -300,7 +548,31 @@ module.exports = function(robot) {
         msg.reply("Oops, looks like there was an error fetching releases for your app: " + name, done);
       } else {
         var rel= JSON.parse(body);
-        msg.reply("* Promoted Release ID: " + rel.id + " Build: " + rel.build + " Env: " + rel.env + " Manifest: " + rel.manifest + " Created: " + rel.created, done);
+        msg.reply(msg.newRichResponse({
+          title: "Promoted Release " + rel.id,
+          fields: [
+            {
+              'title': 'Build',
+              'value': rel.build,
+              'short': true
+            },
+            {
+              'title': 'Environment',
+              'value': rel.env,
+              'short': true
+            },
+            {
+              'title': 'Manifest',
+              'value': ref.manifest,
+              'short': true
+            },
+            {
+              'title': 'Created',
+              'value': moment(rel.created).fromNow(),
+              'short': true
+            }
+          ]
+        }), done);
       }
     });
   });
@@ -316,7 +588,41 @@ module.exports = function(robot) {
           var instances = JSON.parse(body);
           for(var i in instances) {
             var inst = instances[i];
-            instancesList.push("* ID: " + inst.id + " Memory: " + inst.memory + " Processes: " + inst.processes + " Status: " + inst.status + " IP: " + inst.ip + " Agent: " + inst.agent + " Started: " + inst.started);
+            instancesList.push(msg.newRichResponse({
+              title: "Instance " + inst.id,
+              fields: [
+                {
+                  'title': 'Memory',
+                  'value': inst.memory,
+                  'short': true
+                },
+                {
+                  'title': 'Processes',
+                  'value': inst.processes,
+                  'short': true
+                },
+                {
+                  'title': 'Status',
+                  'value': inst.status,
+                  'short': true
+                },
+                {
+                  'title': 'IP',
+                  'value': inst.ip,
+                  'short': true
+                },
+                {
+                  'title': 'Agent',
+                  'value': inst.agent,
+                  'short': true
+                },
+                {
+                  'title': 'Started',
+                  'value': moment(inst.started).fromNow(),
+                  'short': true
+                }
+              ]
+            }));
           }
 
           msg.send(instancesList, done);
@@ -373,7 +679,22 @@ module.exports = function(robot) {
           } else {
             var servicesList = [];
             for(var i in services) {
-              servicesList.push("* " + services[i].name + ", Status: " + services[i].status + ", URL: " + services[i].url);
+              var service = services[i];
+              servicesList.push(msg.newRichResponse({
+                title: service.name,
+                fields: [
+                  {
+                    'title': 'Status',
+                    'value': service.status,
+                    'short': true
+                  },
+                  {
+                    'title': 'URL',
+                    'value': service.url,
+                    'short': true
+                  }
+                ]
+              }));
             }
             msg.send(servicesList, done);
           }
@@ -414,12 +735,22 @@ module.exports = function(robot) {
       } else {
         var result = [];
 
-        info = JSON.parse(body);
-        result.push("Name: " + info.name);
-        result.push("Status: " + info.status);
-        result.push("URL: " + info.url);
-
-        msg.send(result, done);
+        service = JSON.parse(body);
+        msg.send(msg.newRichResponse({
+          title: service.name,
+          fields: [
+            {
+              'title': 'Status',
+              'value': service.status,
+              'short': true
+            },
+            {
+              'title': 'URL',
+              'value': service.url,
+              'short': true
+            }
+          ]
+        }), done);
       }
     });
   });
@@ -470,8 +801,27 @@ module.exports = function(robot) {
     convox("/system").get()(function(err, resp, body) {
       if(resp.statusCode == 200) {
         info = JSON.parse(body);
-        msg.reply("convox system status: " + info.status + " type: " + info.type + " version: " + info.version, done);
+        msg.reply(msg.newRichResponse({
+          title: 'System Status',
+          fields: [
+            {
+              'title': 'Status',
+              'value': info.status,
+              'short': true
+            },
+            {
+              'title': 'Type',
+              'value': info.type,
+              'short': true
+            },
+            {
+              'title': 'Version',
+              'value': info.version,
+              'short': true
+            }
+          ]
+        }), done);
       }
     });
   });
-}
+};
