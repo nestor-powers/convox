@@ -9,7 +9,7 @@ module.exports = function(robot) {
                  auth('convox', process.env.NESTOR_CONVOX_GRID_PASSWORD)
   };
 
-  robot.respond(/convox apps$/, function(msg, done) {
+  robot.respond(/convox apps$/, { suggestions: ["convox apps"] }, function(msg, done) {
     msg.reply("Fetching your apps from Convox...").then(function() {
       convox("/apps").get()(function(err, resp, body) {
         if(resp.statusCode == 200) {
@@ -41,7 +41,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox apps info (.*)$/, function(msg, done) {
+  robot.respond(/convox apps info (.*)$/, { suggestions: ["convox apps info <app-name>"] }, function(msg, done) {
     convox("/apps/" + msg.match[1]).get()(function(err, resp, body) {
       if(resp.statusCode != 200) {
         error = JSON.parse(body)['error'];
@@ -68,7 +68,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox builds (.*)$/, function(msg, done) {
+  robot.respond(/convox builds (.*)$/, { suggestions: ["convox builds <app-name>"] }, function(msg, done) {
     var appName = msg.match[1];
 
     msg.reply("Fetching builds for your app " + appName + " from Convox...").then(function() {
@@ -122,7 +122,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox builds (.*) build=(.*)$/, function(msg, done) {
+  robot.respond(/convox builds (.*) build=(.*)$/, { suggestions: ["convox builds <app-name> build=<buildId>"] }, function(msg, done) {
     var appName = msg.match[1];
     var buildId = msg.match[2];
 
@@ -172,7 +172,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox builds create (.*) repo=(.*)$/, function(msg, done) {
+  robot.respond(/convox builds create (.*) repo=(.*)$/, { suggestions: ["convox builds create <app-name> repo=<repo-name>"] }, function(msg, done) {
     var appName = msg.match[1];
     var repo = msg.match[2];
 
@@ -222,7 +222,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox apps env (.*)$/, function(msg, done) {
+  robot.respond(/convox apps env (.*)$/, { suggestions: ["convox apps env <app-name>"] }, function(msg, done) {
     var name = msg.match[1];
 
     convox("/apps/" + name + "/environment").get()(function(err, resp, body) {
@@ -235,7 +235,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox apps delete (.*)$/, function(msg, done) {
+  robot.respond(/convox apps delete (.*)$/, { suggestions: ["convox apps delete <app-name>"] }, function(msg, done) {
     var name = msg.match[1];
 
     convox("/apps/" + name).delete()(function(err, resp, body) {
@@ -254,7 +254,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox apps create (.*)$/, function(msg, done) {
+  robot.respond(/convox apps create (.*)$/, { suggestions: ["convox apps create <app-name>"] }, function(msg, done) {
     var name = msg.match[1];
 
     msg.reply("Creating app " + name + "...").then(function() {
@@ -269,7 +269,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox formation (.*)$/, function(msg, done) {
+  robot.respond(/convox formation (.*)$/, { suggestions: ["convox formation <app-name>"] }, function(msg, done) {
     var name = msg.match[1];
 
     convox("/apps" + name + "/formation").get()(function(err, resp, body) {
@@ -307,7 +307,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox formation update (\w+) process=(\w+)\s*(?:count=(\d+))*\s*(?:memory=(\d+))*/i, function(msg, done) {
+  robot.respond(/convox formation update (\w+) process=(\w+)\s*(?:count=(\d+))*\s*(?:memory=(\d+))*/i, { suggestions: ["convox formation update <app-name> process=<process-id> [count=count] [memory=memory]"] }, function(msg, done) {
     var appName = msg.match[1];
     var processId = msg.match[2];
     var count = msg.match[3];
@@ -330,7 +330,7 @@ module.exports = function(robot) {
     }
   });
 
-  robot.respond(/convox processes (.*)$/, function(msg, done) {
+  robot.respond(/convox processes (.*)$/, { suggestions: ["convox processes <app-name>"] }, function(msg, done) {
     var name = msg.match[1];
 
     convox("/apps" + name + "/processes").get()(function(err, resp, body) {
@@ -363,7 +363,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox processes delete (.*) process=(.*)$/, function(msg, done) {
+  robot.respond(/convox processes delete (.*) process=(.*)$/, { suggestions: ["convox processes delete <app-name> process=<process-id>"] }, function(msg, done) {
     var appName = msg.match[1];
     var processId = msg.match[2];
 
@@ -381,7 +381,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox processes info (.*) process=(.*)$/, function(msg, done) {
+  robot.respond(/convox processes info (.*) process=(.*)$/, { suggestions: ["convox processes info <app-name> process=<process-id>"] }, function(msg, done) {
     var appName = msg.match[1];
     var processId = msg.match[2];
 
@@ -440,7 +440,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox processes run (.*) process=(.*)$/, function(msg, done) {
+  robot.respond(/convox processes run (.*) process=(.*)$/, { suggestions: ["convox processes run <app-name> process=<process-id>"] }, function(msg, done) {
     var appName = msg.match[1];
     var processId = msg.match[2];
 
@@ -458,7 +458,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox releases (.*)$/i, function(msg, done) {
+  robot.respond(/convox releases (.*)$/i, { suggestions: ["convox releases <app-name>"] }, function(msg, done) {
     var name = msg.match[1];
 
     convox("/apps" + name + "/releases").get()(function(err, resp, body) {
@@ -501,7 +501,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox releases (.*) release=(.*)$/i, function(msg, done) {
+  robot.respond(/convox releases (.*) release=(.*)$/i, { suggestions: ["convox releases <app-name> release=<release-id>"] }, function(msg, done) {
     var appName = msg.match[1];
     var releaseId = msg.match[2];
 
@@ -539,7 +539,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox releases promote (.*) release=(.*)$/i, function(msg, done) {
+  robot.respond(/convox releases promote (.*) release=(.*)$/i, { suggestions: ["convox releases promote <app-name> release=<release-id>"] }, function(msg, done) {
     var appName = msg.match[1];
     var releaseId = msg.match[2];
 
@@ -577,7 +577,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox instances$/, function(msg, done) {
+  robot.respond(/convox instances$/, { suggestions: ["convox instances"] }, function(msg, done) {
     msg.reply("Fetching your instances on Convox...").then(function() {
       convox("/instances").get()(function(err, resp, body) {
         if(resp.statusCode != 200) {
@@ -631,7 +631,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox instances keyroll$/, function(msg, done) {
+  robot.respond(/convox instances keyroll$/, { suggestions: ["convox instances keyroll"] }, function(msg, done) {
     msg.reply("Regenerating and storing EC2 Key Pairs on your instances...").then(function() {
       convox("/instances/keyroll").post()(function(err, resp, body) {
         if(resp.statusCode != 200) {
@@ -649,7 +649,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox instances delete (.*)$/, function(msg, done) {
+  robot.respond(/convox instances delete (.*)$/, { suggestions: ["convox instances delete <instance-id>"] }, function(msg, done) {
     var instanceId = msg.match[1];
 
     msg.reply("Deleting instance" + instanceId + "...").then(function() {
@@ -669,7 +669,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox services$/, function(msg, done) {
+  robot.respond(/convox services$/, { suggestions: ["convox services"] }, function(msg, done) {
     msg.reply("Fetching your services on Convox...").then(function() {
       convox("/services").get()(function(err, resp, body) {
         if(resp.statusCode == 200) {
@@ -707,7 +707,7 @@ module.exports = function(robot) {
     return Math.floor(Math.random() * (max - min) + min);
   };
 
-  robot.respond(/convox services create (mysql|postgres|redis)\s*(.*?)$/, function(msg, done) {
+  robot.respond(/convox services create (mysql|postgres|redis)\s*(.*?)$/, { suggestions: ["convox services create <mysql|postgres|redis>"] }, function(msg, done) {
     var type = msg.match[1];
     var name = msg.match[2];
     if(!name || name == "") {
@@ -727,7 +727,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox services info (.*)$/, function(msg, done) {
+  robot.respond(/convox services info (.*)$/, { suggestions: ["convox services info <service-id>"] }, function(msg, done) {
     convox("/services/" + msg.match[1]).get()(function(err, resp, body) {
       if(resp.statusCode != 200) {
         error = JSON.parse(body)['error'];
@@ -755,7 +755,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox services delete (.*)$/, function(msg, done) {
+  robot.respond(/convox services delete (.*)$/, { suggestions: ["convox services delete <service-id>"] }, function(msg, done) {
     var name = msg.match[1];
 
     convox("/services/" + name).delete()(function(err, resp, body) {
@@ -768,7 +768,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox services link create (.*?) app=(.*)$/i, function(msg, done) {
+  robot.respond(/convox services link create (.*?) app=(.*)$/i, { suggestions: ["convox services link create <service-id> app=<app-name>"] }, function(msg, done) {
     var serviceName = msg.match[1];
     var appName = msg.match[2];
 
@@ -783,7 +783,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox services link delete (.*?) app=(.*)$/i, function(msg, done) {
+  robot.respond(/convox services link delete (.*?) app=(.*)$/i, { suggestions: ["convox services link delete <service-id> app=<app-name>"] }, function(msg, done) {
     var serviceName = msg.match[1];
     var appName = msg.match[2];
 
@@ -797,7 +797,7 @@ module.exports = function(robot) {
     });
   });
 
-  robot.respond(/convox system$/, function(msg, done) {
+  robot.respond(/convox system$/, { suggestions: ["convox system"] }, function(msg, done) {
     convox("/system").get()(function(err, resp, body) {
       if(resp.statusCode == 200) {
         info = JSON.parse(body);
